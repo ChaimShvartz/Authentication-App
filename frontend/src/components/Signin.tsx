@@ -1,13 +1,12 @@
-import { useState, type PropsWithChildren } from "react";
+import { useState } from "react";
 import Form from "./Form";
 import { getToken } from "../services/apiCalls";
 import { UseLoginStore } from "../store/UseLoginStore";
 
 interface SigninProps {
     onChangeTab: () => void;
-    children: PropsWithChildren;
 }
-const Signin = ({ children, onChangeTab }: SigninProps) => {
+const Signin = ({ onChangeTab }: SigninProps) => {
     const [form, setForm] = useState({});
     const { toggleLogin } = UseLoginStore();
 
@@ -17,12 +16,13 @@ const Signin = ({ children, onChangeTab }: SigninProps) => {
     };
     const onSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
-        const success =  await getToken("http://localhost:3000/auth/login", form);
-        if(success) toggleLogin(true);
+        const success = await getToken(
+            "http://localhost:3000/auth/login",
+            form,
+        );
+        if (success) toggleLogin(true);
     };
 
-    const token = localStorage.getItem("token");
-    if (token) return children.children;
     return (
         <>
             <Form onChange={onChange} onSubmit={onSubmit} recieveName={false} />

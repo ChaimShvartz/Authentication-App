@@ -17,9 +17,9 @@ const OpeningPage = (children: PropsWithChildren) => {
     return (
         <>
             {tab === "signup" ? (
-                <Signup onChangeTab={toggleTab}>{children}</Signup>
+                <Signup onChangeTab={toggleTab}/>
             ) : (
-                <Signin onChangeTab={toggleTab}>{children}</Signin>
+                <Signin onChangeTab={toggleTab}/>
             )}
         </>
     );
