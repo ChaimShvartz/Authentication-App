@@ -9,14 +9,25 @@ export const hashPassword = (password) => {
 };
 
 export const verifyPassword = async (email, password) => {
-    const { username, password: hashedPassword } = await getUserByEmail(email);
+    const user = await getUserByEmail(email);
+    if (!user)
+        throw Object.assign(new Error(), {
+            status: 401,
+            message: "Email or password are incorrect",
+        });
+        
+    const { username, password: hashedPassword } = user;
     const isMatch = await bcrypt.compare(password, hashedPassword);
     if (!isMatch)
         throw Object.assign(new Error(), {
             status: 401,
             message: "Email or password are incorrect",
         });
-    return jwt.sign({ username, email }, JWT_SECRET);
+    return generateToken({ username, email });
+};
+
+export const generateToken = (payload) => {
+    return jwt.sign(payload, JWT_SECRET);
 };
 
 export const verifyToken = (token) => {

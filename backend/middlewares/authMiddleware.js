@@ -1,13 +1,7 @@
 import { verifyToken } from "../services/authServices.js";
 
 export const auth = async (req, _res, next) => {
-    let { email } = req.body;
-    email = email.trim();
-    if (!email)
-        throw Object.assign(new Error(), {
-            status: 400,
-            message: "Email is required",
-        });
+
     const { authorization } = req.headers;
     const parts = authorization.split(" ");
     if (parts.length !== 2 || parts[0] !== "Bearer")

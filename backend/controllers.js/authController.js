@@ -1,7 +1,13 @@
 import { addUser, getUserByEmail } from "../repositories/usersRepo.js";
-import { hashPassword, verifyPassword } from "../services/authServices.js";
+import {
+    hashPassword,
+    verifyPassword,
+    generateToken,
+} from "../services/authServices.js";
 
 export const register = async (req, res) => {
+    console.log(req.body);
+
     let { username, email, password } = req.body;
     username = username.trim();
     email = email.trim();
@@ -20,9 +26,12 @@ export const register = async (req, res) => {
 
     const hashedPassword = await hashPassword(password);
     await addUser({ username, email, password: hashedPassword });
+
+    const token = generateToken({ username, email });
+
     res.status(201).json({
         success: true,
-        message: "User registed successfully",
+        token,
     });
 };
 export const login = async (req, res) => {
