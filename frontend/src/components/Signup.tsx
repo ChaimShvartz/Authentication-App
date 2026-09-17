@@ -1,4 +1,7 @@
 import React, { useState, type PropsWithChildren } from "react";
+import Form from "./Form";
+import { getToken } from "../services/apiCalls";
+import { UseLoginStore } from "../store/UseLoginStore";
 
 interface SignUpProps {
     onChangeTab: () => void;
@@ -6,29 +9,30 @@ interface SignUpProps {
 }
 const Signup = ({ children, onChangeTab }: SignUpProps) => {
     const [form, setForm] = useState({});
+    const { toggleLogin } = UseLoginStore();
+
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
     };
-    const onSubmit = (e: React.SubmitEvent) => {
+    const onSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
-        
+        const success = await getToken("http://localhost:3000/auth/register", form);
+        if(success) toggleLogin(true);
     };
+
+    const token = localStorage.getItem("token");
+    if (token) return children.children;
+
     return (
         <>
-            <form onSubmit={onSubmit}>
-                <label>
-                    Name <input type="text" onChange={onChange} required />
-                </label>
-                <label>
-                    Email <input type="email" onChange={onChange}required/>
-                </label>
-                <label>
-                    Password <input type="password" onChange={onChange} required/>
-                </label>
-                <button type="submit">Submit</button>
-            </form>
-            {children.children}
+            <Form onChange={onChange} onSubmit={onSubmit} />
+            <p>
+                Do you have an account?{" "}
+                <span>
+                    <a onClick={onChangeTab}>Log in</a>
+                </span>
+            </p>
         </>
     );
 };
